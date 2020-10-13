@@ -31,7 +31,8 @@ const useStyles = makeStyles({
   },
 });
 
-function Weekly({ dispatch }) {
+function Weekly(props) {
+  const { dispatch } = props;
   const [selectedWeeks, setSelectedWeeks] = useState([]);
   const [interval, setInterval] = useState(1);
   const classes = useStyles();
@@ -57,9 +58,8 @@ function Weekly({ dispatch }) {
     ));
   };
   useEffect(() => {
-    console.log("new week!");
     dispatch({ type: SET_WEEKLY_DAYS, payload: selectedWeeks });
-  }, [selectedWeeks]);
+  }, [selectedWeeks, dispatch]);
   return (
     <div className={classes.root}>
       <Grid container spacing={2} style={{ width: "100%" }}>

@@ -20,7 +20,7 @@ function End({ dispatch }) {
   const [date, setDate] = useState(moment(new Date()).format("yyyy-MM-DD"));
   useEffect(() => {
     dispatch({ type: SET_END_SUBTYPE, payload: type });
-  }, [type]);
+  }, [type, dispatch]);
   const renderMoreFields = () => {
     if (type === "Never") return null;
     else if (type === "After")

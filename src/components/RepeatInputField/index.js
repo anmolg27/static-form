@@ -10,7 +10,8 @@ import Select from "@material-ui/core/Select";
 import Weekly from "./Weekly";
 import Monthly from "./Monthly";
 import Yearly from "./Yearly";
-function RepeatInputField({ dispatch }) {
+function RepeatInputField(props) {
+  const { dispatch } = props;
   const [type, setType] = useState("Yearly");
   const renderMoreFields = () => {
     if (type === "Yearly") return <Yearly />;

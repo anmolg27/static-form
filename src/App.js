@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 
 import { connect } from "react-redux";
@@ -9,6 +9,7 @@ import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import TextField from "@material-ui/core/TextField";
 
 import StartInputField from "./components/StartInputField/";
 import RepeatInputField from "./components/RepeatInputField/";
@@ -36,7 +37,15 @@ const useStyles = makeStyles({
 });
 
 function App(props) {
+  const [url, setUrl] = useState("");
   const classes = useStyles();
+  const handleSend = () => {
+    console.log("url is " + url);
+    if (!url) {
+      return alert("Please provide postbin url");
+    }
+    props.postData(url);
+  };
   return (
     <div className="App">
       <Container className={classes.container} maxWidth="lg">
@@ -74,15 +83,53 @@ function App(props) {
               <End />
             </Grid>
           </Grid>
+          <Grid
+            container
+            style={{ padding: "0px" }}
+            spacing={2}
+            className={classes.gridContainer}
+            justify="flex-end"
+            alignItems="center"
+          >
+            <Grid item xs={4}>
+              <TextField
+                fullWidth
+                variant="outlined"
+                type="text"
+                placeholder="Postbin url"
+                size="medium"
+                value={url}
+                onChange={(event) => setUrl(event.target.value)}
+              />
+            </Grid>
+            <Grid item xs={2}>
+              <Button
+                fullWidth
+                size="large"
+                variant="contained"
+                color="secondary"
+                onClick={() => handleSend()}
+              >
+                Send
+              </Button>
+            </Grid>
+          </Grid>
         </div>
-        <Button
-          style={{ marginTop: "10px" }}
-          variant="contained"
-          color="secondary"
-          onClick={() => props.postData()}
+        <div
+          style={{
+            border: "solid 1px grey",
+            borderRadius: "5px",
+            padding: "10px",
+            width: "fit-content",
+            height: "12vh",
+            margin: "20px auto",
+          }}
         >
-          Generate rrule and send
-        </Button>
+          <p id="rrule" style={{ color: "grey" }}>
+            rrule will be generated and shown here and then sent to the postbin
+            url here once you click send
+          </p>
+        </div>
       </Container>
     </div>
   );

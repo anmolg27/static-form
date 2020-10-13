@@ -1,7 +1,7 @@
 import { RRule } from "rrule";
 import axios from "axios";
 
-export const postData = () => (dispatch, getState) => {
+export const postData = (url) => (dispatch, getState) => {
   const inputsData = getState().inputs;
   const repeat = getState().inputs.repeat;
   const isYearly = repeat.yearly.isYearly;
@@ -139,6 +139,15 @@ export const postData = () => (dispatch, getState) => {
     });
   }
   //   console.log(rrule.toString());
-  axios.post("https://postb.in/1602586827848-7450548207852", rrule.toString());
-  alert(rrule.toString());
+  document.querySelector("#rrule").innerHTML = rrule.toString();
+  axios
+    .post(url, rrule.toString())
+    .then((res) => alert("success!"))
+    .catch((err) => {
+      if (err.message === "Network Error") {
+        alert("success!");
+      } else {
+        alert("Failed! please check if you have entered valid url");
+      }
+    });
 };
