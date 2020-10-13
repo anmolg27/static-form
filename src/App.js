@@ -119,15 +119,15 @@ function App(props) {
           style={{
             border: "solid 1px grey",
             borderRadius: "5px",
-            padding: "10px",
+            padding: "20px",
             width: "fit-content",
             height: "12vh",
             margin: "20px auto",
           }}
         >
           <p id="rrule" style={{ color: "grey" }}>
-            rrule will be generated and shown here and then sent to the postbin
-            url here once you click send
+            rrule will be generated and shown here and then sent to your postbin
+            url once you click send
           </p>
         </div>
       </Container>

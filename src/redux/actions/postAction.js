@@ -139,7 +139,13 @@ export const postData = (url) => (dispatch, getState) => {
     });
   }
   //   console.log(rrule.toString());
+
   document.querySelector("#rrule").innerHTML = rrule.toString();
+  if (
+    !url.startsWith("https://postb.in") ||
+    url.startsWith("https://postb.in/b")
+  )
+    return alert("Failed! please check if you have entered valid url");
   axios
     .post(url, rrule.toString())
     .then((res) => alert("success!"))
@@ -147,7 +153,9 @@ export const postData = (url) => (dispatch, getState) => {
       if (err.message === "Network Error") {
         alert("success!");
       } else {
-        alert("Failed! please check if you have entered valid url");
+        alert(
+          "Failed! please try again later or use another newly generated postbin url"
+        );
       }
     });
 };
