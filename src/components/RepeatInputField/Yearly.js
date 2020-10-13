@@ -1,5 +1,15 @@
 import React, { useState } from "react";
 
+import { connect } from "react-redux";
+import {
+  SET_YEARLY_SUBTYPE,
+  SET_YEARLY_ARG2_MONTH,
+  SET_YEARLY_ARG2_MONTHDAY,
+  SET_YEARLY_ARG3_SETPOS,
+  SET_YEARLY_ARG3_DAY,
+  SET_YEARLY_ARG3_MONTH,
+} from "../../redux/types";
+
 import Grid from "@material-ui/core/Grid";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
@@ -26,7 +36,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Yearly() {
+function Yearly({ dispatch }) {
   const [value, setValue] = useState("month-day");
   const [month, setMonth] = useState("Jan");
 
@@ -48,6 +58,17 @@ export default function Yearly() {
     "Nov",
     "Dec",
   ];
+  const weekNames = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+  const weekNumbers = ["First", "Second", "Third", "Fourth", "Last"];
+
   const renderMonthsOptions = () => {
     return months.map((month) => <MenuItem value={month}>{month}</MenuItem>);
   };
@@ -74,19 +95,9 @@ export default function Yearly() {
     }
   };
   const renderWeeksNumberOptions = () => {
-    const weekNumbers = ["First", "Second", "Third", "Fourth", "Last"];
     return weekNumbers.map((week) => <MenuItem value={week}>{week}</MenuItem>);
   };
   const renderWeekNamesOptions = () => {
-    const weekNames = [
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday",
-    ];
     return weekNames.map((week) => <MenuItem value={week}>{week}</MenuItem>);
   };
   const renderFormField = (onChangeHandler, value, renderOptions) => {
@@ -109,7 +120,10 @@ export default function Yearly() {
       <FormControl style={{ width: "100%" }} component="fieldset">
         <RadioGroup
           value={value}
-          onChange={(event) => setValue(event.target.value)}
+          onChange={(event) => {
+            dispatch({ type: SET_YEARLY_SUBTYPE, payload: event.target.value });
+            setValue(event.target.value);
+          }}
         >
           <Grid container className={classes.textField}>
             <Grid item xs={1} className={classes.radioButton}>
@@ -131,10 +145,30 @@ export default function Yearly() {
               </Grid>
 
               <Grid item xs={3}>
-                {renderFormField(setMonth, month, renderMonthsOptions)}
+                {renderFormField(
+                  (value) => {
+                    setMonth(value);
+                    dispatch({
+                      type: SET_YEARLY_ARG2_MONTH,
+                      payload: 1 + months.findIndex((month) => month === value),
+                    });
+                  },
+                  month,
+                  renderMonthsOptions
+                )}
               </Grid>
               <Grid item xs={3}>
-                {renderFormField(setDay, day, renderDaysOptions)}
+                {renderFormField(
+                  (value) => {
+                    setDay(value);
+                    dispatch({
+                      type: SET_YEARLY_ARG2_MONTHDAY,
+                      payload: value,
+                    });
+                  },
+                  day,
+                  renderDaysOptions
+                )}
               </Grid>
             </Grid>
           </Grid>
@@ -158,19 +192,42 @@ export default function Yearly() {
               </Grid>
               <Grid item xs={3}>
                 {renderFormField(
-                  setweekNumber,
+                  (value) => {
+                    setweekNumber(value);
+                    dispatch({
+                      type: SET_YEARLY_ARG3_SETPOS,
+                      payload: 1 + weekNumbers.findIndex((wk) => wk === value),
+                    });
+                  },
                   weekNumber,
                   renderWeeksNumberOptions
                 )}
               </Grid>
               <Grid item xs={3}>
-                {renderFormField(setWeekName, weekName, renderWeekNamesOptions)}
+                {renderFormField(
+                  (value) => {
+                    setWeekName(value);
+                    dispatch({ type: SET_YEARLY_ARG3_DAY, payload: value });
+                  },
+                  weekName,
+                  renderWeekNamesOptions
+                )}
               </Grid>
               <Grid item xs={1}>
                 <p>of</p>
               </Grid>
               <Grid item xs={3}>
-                {renderFormField(setMonth, month, renderMonthsOptions)}
+                {renderFormField(
+                  (value) => {
+                    setMonth(value);
+                    dispatch({
+                      type: SET_YEARLY_ARG3_MONTH,
+                      payload: 1 + months.findIndex((month) => month === value),
+                    });
+                  },
+                  month,
+                  renderMonthsOptions
+                )}
               </Grid>
             </Grid>
           </Grid>
@@ -179,3 +236,5 @@ export default function Yearly() {
     </div>
   );
 }
+
+export default connect(null)(Yearly);

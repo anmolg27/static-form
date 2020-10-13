@@ -1,5 +1,14 @@
 import React, { useState } from "react";
 
+import { connect } from "react-redux";
+import {
+  SET_MONTHLY_SUBTYPE,
+  SET_MONTHLY_INTERVAL,
+  SET_MONTHLY_ARG1_MONTHDAY,
+  SET_MONTHLY_ARG2_DAY,
+  SET_MONTHLY_ARG2_SETPOS,
+} from "../../redux/types";
+
 import Grid from "@material-ui/core/Grid";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
@@ -29,13 +38,14 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Monthly() {
+function Monthly({ dispatch }) {
   const [value, setValue] = useState("month-day");
-
+  const [every, setEvery] = useState(1);
   const [day, setDay] = useState(1);
   const [weekNumber, setweekNumber] = useState("First");
   const [weekName, setWeekName] = useState("Monday");
   const classes = useStyles();
+  const weekNumbers = ["First", "Second", "Third", "Fourth", "Last"];
   const renderDaysOptions = () => {
     const daysHtml = [];
     for (let i = 1; i <= 31; i++) {
@@ -45,7 +55,6 @@ export default function Monthly() {
     return daysHtml;
   };
   const renderWeeksNumberOptions = () => {
-    const weekNumbers = ["First", "Second", "Third", "Fourth", "Last"];
     return weekNumbers.map((week) => <MenuItem value={week}>{week}</MenuItem>);
   };
   const renderWeekNamesOptions = () => {
@@ -89,6 +98,18 @@ export default function Monthly() {
               variant="outlined"
               type="number"
               autoComplete="current-password"
+              value={every}
+              onChange={(event) => {
+                let temp = event.target.value;
+                if (temp === "") {
+                  temp = "0";
+                }
+                setEvery(parseInt(temp));
+                dispatch({
+                  type: SET_MONTHLY_INTERVAL,
+                  payload: temp,
+                });
+              }}
             />
           </Grid>
           <Grid item xs={1.5}>
@@ -97,7 +118,13 @@ export default function Monthly() {
         </Grid>
         <RadioGroup
           value={value}
-          onChange={(event) => setValue(event.target.value)}
+          onChange={(event) => {
+            setValue(event.target.value);
+            dispatch({
+              type: SET_MONTHLY_SUBTYPE,
+              payload: event.target.value,
+            });
+          }}
         >
           <Grid container className={classes.textField}>
             <Grid item xs={1} className={classes.radioButton}>
@@ -119,7 +146,17 @@ export default function Monthly() {
               </Grid>
 
               <Grid item xs={4}>
-                {renderFormField(setDay, day, renderDaysOptions)}
+                {renderFormField(
+                  (value) => {
+                    setDay(value);
+                    dispatch({
+                      type: SET_MONTHLY_ARG1_MONTHDAY,
+                      payload: value,
+                    });
+                  },
+                  day,
+                  renderDaysOptions
+                )}
               </Grid>
             </Grid>
           </Grid>
@@ -143,13 +180,26 @@ export default function Monthly() {
               </Grid>
               <Grid item xs={4}>
                 {renderFormField(
-                  setweekNumber,
+                  (value) => {
+                    setweekNumber(value);
+                    dispatch({
+                      type: SET_MONTHLY_ARG2_SETPOS,
+                      payload: 1 + weekNumbers.findIndex((wk) => wk === value),
+                    });
+                  },
                   weekNumber,
                   renderWeeksNumberOptions
                 )}
               </Grid>
               <Grid item xs={5}>
-                {renderFormField(setWeekName, weekName, renderWeekNamesOptions)}
+                {renderFormField(
+                  (value) => {
+                    setWeekName(value);
+                    dispatch({ type: SET_MONTHLY_ARG2_DAY, payload: value });
+                  },
+                  weekName,
+                  renderWeekNamesOptions
+                )}
               </Grid>
             </Grid>
           </Grid>
@@ -158,3 +208,5 @@ export default function Monthly() {
     </div>
   );
 }
+
+export default connect(null)(Monthly);

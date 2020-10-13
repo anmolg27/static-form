@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+import { connect } from "react-redux";
+import { SET_WEEKLY_DAYS, SET_WEEKLY_INTERVAL } from "../../redux/types";
 
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
@@ -28,18 +31,16 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Weekly() {
+function Weekly({ dispatch }) {
   const [selectedWeeks, setSelectedWeeks] = useState([]);
-
+  const [interval, setInterval] = useState(1);
   const classes = useStyles();
 
   const handleWeekButtonClick = (week) => {
     setSelectedWeeks((prevState) => {
       if (prevState.includes(week)) {
-        console.log(`${week} is now being removed`);
         return prevState.filter((weekName) => weekName !== week);
       } else {
-        console.log(`${week} is now being included`);
         return [...prevState, week];
       }
     });
@@ -55,6 +56,10 @@ export default function Weekly() {
       </Button>
     ));
   };
+  useEffect(() => {
+    console.log("new week!");
+    dispatch({ type: SET_WEEKLY_DAYS, payload: selectedWeeks });
+  }, [selectedWeeks]);
   return (
     <div className={classes.root}>
       <Grid container spacing={2} style={{ width: "100%" }}>
@@ -63,7 +68,23 @@ export default function Weekly() {
         </Grid>
 
         <Grid item xs={5} style={{ alignSelf: "center" }}>
-          <TextField fullWidth variant="outlined" type="number" />
+          <TextField
+            fullWidth
+            variant="outlined"
+            type="number"
+            value={interval}
+            onChange={(event) => {
+              let temp = event.target.value;
+              if (temp === "") {
+                temp = "0";
+              }
+              setInterval(parseInt(temp));
+              dispatch({
+                type: SET_WEEKLY_INTERVAL,
+                payload: temp,
+              });
+            }}
+          />
         </Grid>
         <Grid item xs={1.5}>
           <p> week{"(s)"} </p>
@@ -80,3 +101,5 @@ export default function Weekly() {
     </div>
   );
 }
+
+export default connect(null)(Weekly);

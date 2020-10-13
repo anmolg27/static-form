@@ -1,10 +1,14 @@
 import React from "react";
 import "./App.css";
 
+import { connect } from "react-redux";
+import { postData } from "./redux/actions/postAction";
+
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import Button from "@material-ui/core/Button";
 
 import StartInputField from "./components/StartInputField/";
 import RepeatInputField from "./components/RepeatInputField/";
@@ -31,7 +35,7 @@ const useStyles = makeStyles({
   },
 });
 
-function App() {
+function App(props) {
   const classes = useStyles();
   return (
     <div className="App">
@@ -71,9 +75,17 @@ function App() {
             </Grid>
           </Grid>
         </div>
+        <Button
+          style={{ marginTop: "10px" }}
+          variant="contained"
+          color="secondary"
+          onClick={() => props.postData()}
+        >
+          Generate rrule and send
+        </Button>
       </Container>
     </div>
   );
 }
 
-export default App;
+export default connect(null, { postData })(App);
